@@ -48,6 +48,6 @@ COPY . /var/www/html
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# === DEBUGGING CMD ===
-# Perintah ini TIDAK akan menyalakan server. Tujuannya hanya untuk mencetak log.
-CMD ["/bin/bash", "-c", "echo '--- Memulai Misi Debug ---' && php artisan config:clear && php artisan cache:clear && touch storage/logs/laravel.log && chmod 777 storage/logs/laravel.log && echo '--- Isi Log Laravel (storage/logs/laravel.log) ---' && cat storage/logs/laravel.log && echo '--- Selesai Misi Debug ---' && sleep 300"]
+# === DEBUGGING CMD v2 ===
+# Perintah ini akan mencetak variabel penting lalu diam agar tidak dihentikan.
+CMD ["/bin/bash", "-c", "echo '--- Memulai Verifikasi Variabel ---' && echo 'APP_KEY='${APP_KEY} && echo 'DB_HOST='${DB_HOST} && echo '--- Verifikasi Selesai, Menunggu... ---' && sleep 300"]
