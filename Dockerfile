@@ -10,7 +10,7 @@ RUN composer install --no-dev --no-interaction --no-plugins --no-scripts --prefe
 FROM node:18 as node_assets
 WORKDIR /app
 COPY package.json package.json
-#COPY package-lock.json package-lock.json
+COPY package-lock.json package-lock.json
 RUN npm install
 COPY . .
 RUN npm run build
@@ -29,6 +29,10 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
 && docker-php-ext-configure gd --with-freetype --with-jpeg \
 && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
+
+# === BARIS BARU DI SINI ===
+# Configure Apache to listen on the port provided by Railway
+RUN sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf
 
 # Configure Apache for Laravel's public directory
 RUN a2enmod rewrite
