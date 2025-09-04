@@ -30,6 +30,9 @@ RUN apt-get update && apt-get install -y \
 && docker-php-ext-configure gd --with-freetype --with-jpeg \
 && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
 
+# Configure Apache to listen on the port provided by Railway
+RUN sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf
+
 # Configure Apache for Laravel's public directory
 RUN a2enmod rewrite
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -44,10 +47,9 @@ COPY --from=vendor /app/vendor/ /var/www/html/vendor/
 COPY --from=node_assets /app/public/ /var/www/html/public/
 COPY . /var/www/html
 
-# Set correct permissions for Laravel
+# Set correct permissions for Laravel (777 for debugging)
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# === DEBUGGING CMD v2 ===
-# Perintah ini akan mencetak variabel penting lalu diam agar tidak dihentikan.
-CMD ["/bin/bash", "-c", "echo '--- Memulai Verifikasi Variabel ---' && echo 'APP_KEY='${APP_KEY} && echo 'DB_HOST='${DB_HOST} && echo '--- Verifikasi Selesai, Menunggu... ---' && sleep 300"]
+# Run migrations and then start the Apache server
+CMD /bin/bash -c "php artisan migrate --force && apache2-foreground"
