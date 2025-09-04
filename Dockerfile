@@ -45,10 +45,8 @@ WORKDIR /var/www/html
 
 # Copy application files
 COPY --from=vendor /app/vendor/ /var/www/html/vendor/
-COPY --from=node_assets /app/public/ /var/w
-ww/html/public/
+COPY --from=node_assets /app/public/ /var/www/html/public/
 COPY . /var/www/html
-
 # Set correct permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
