@@ -39,7 +39,6 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# === PASTIKAN BARIS INI ADA ===
 # Set the working directory
 WORKDIR /var/www/html
 
@@ -51,3 +50,7 @@ COPY . /var/www/html
 # Set correct permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# === PERUBAHAN DI SINI ===
+# Run migrations and then start the Apache server
+CMD /bin/bash -c "php artisan migrate --force && apache2-foreground"
