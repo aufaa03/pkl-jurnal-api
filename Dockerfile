@@ -30,9 +30,6 @@ RUN apt-get update && apt-get install -y \
 && docker-php-ext-configure gd --with-freetype --with-jpeg \
 && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
 
-# Configure Apache to listen on the port provided by Railway
-RUN sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf
-
 # Configure Apache for Laravel's public directory
 RUN a2enmod rewrite
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -51,6 +48,6 @@ COPY . /var/www/html
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# === PERUBAHAN DI SINI ===
-# Run migrations and then start the Apache server
-CMD /bin/bash -c "php artisan migrate --force && apache2-foreground"
+# === DEBUGGING CMD ===
+# Perintah ini TIDAK akan menyalakan server. Tujuannya hanya untuk mencetak log.
+CMD ["/bin/bash", "-c", "echo '--- Memulai Misi Debug ---' && php artisan config:clear && php artisan cache:clear && touch storage/logs/laravel.log && chmod 777 storage/logs/laravel.log && echo '--- Isi Log Laravel (storage/logs/laravel.log) ---' && cat storage/logs/laravel.log && echo '--- Selesai Misi Debug ---' && sleep 300"]
