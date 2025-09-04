@@ -10,7 +10,7 @@ RUN composer install --no-dev --no-interaction --no-plugins --no-scripts --prefe
 FROM node:18 as node_assets
 WORKDIR /app
 COPY package.json package.json
-COPY package-lock.json package-lock.json
+#COPY package-lock.json package-lock.json
 RUN npm install
 COPY . .
 RUN npm run build
