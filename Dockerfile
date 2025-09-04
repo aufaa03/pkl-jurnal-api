@@ -30,7 +30,6 @@ RUN apt-get update && apt-get install -y \
 && docker-php-ext-configure gd --with-freetype --with-jpeg \
 && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
 
-# === BARIS BARU DI SINI ===
 # Configure Apache to listen on the port provided by Railway
 RUN sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf
 
@@ -40,9 +39,14 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
+# === LINE BARU DI SINI ===
+# Set the working directory
+WORKDIR /var/www/html
+
 # Copy application files
 COPY --from=vendor /app/vendor/ /var/www/html/vendor/
-COPY --from=node_assets /app/public/ /var/www/html/public/
+COPY --from=node_assets /app/public/ /var/w
+ww/html/public/
 COPY . /var/www/html
 
 # Set correct permissions for Laravel
